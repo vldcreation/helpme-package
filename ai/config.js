@@ -2,7 +2,7 @@ class ChatClientConfig {
   constructor() {
     this.gemini = {
       apiKey: process.env.GEMINI_API_KEY || '',
-      model: process.env.GEMINI_MODEL || 'gemini-1.5-pro'
+      model: process.env.GEMINI_MODEL || 'gemini-1.5-flash'
     };
 
     this.openai = {
@@ -23,4 +23,4 @@ class ChatClientConfig {
   }
 }
 
-module.exports = ChatClientConfig;
+export default ChatClientConfig;

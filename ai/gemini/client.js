@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 class GeminiClient {
   constructor(config) {
@@ -11,7 +11,7 @@ class GeminiClient {
   async chat(message, options = {}) {
     try {
       const model = this.genAI.getGenerativeModel({ 
-        model: options.model || 'gemini-1.5-pro'
+        model: options.model || 'gemini-1.5-flash'
       });
 
       const chat = model.startChat();
@@ -25,4 +25,4 @@ class GeminiClient {
   }
 }
 
-module.exports = GeminiClient;
+export default GeminiClient;

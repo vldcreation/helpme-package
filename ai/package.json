@@ -1,0 +1,26 @@
+{
+    "name": "helpme-package-ai",
+    "version": "1.0.0",
+    "author": {
+      "name": "Vicktor Desrony",
+      "copilot": "Deepseek V3 | GPT-4 | Bolt AI"
+    },
+    "private": true,
+    "description": "",
+    "main": "chat.js",
+    "type": "module",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node chat.js"
+    },
+    "keywords": [],
+    "license": "ISC",
+    "dependencies": {
+      "@google/generative-ai": "^0.21.0",
+      "discord.js": "^14.14.1",
+      "dotenv": "^16.3.1",
+      "openai": "^4.24.1",
+      "sprintf-js": "^1.1.3"
+    }
+  }
+  

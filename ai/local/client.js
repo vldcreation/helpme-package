@@ -6,10 +6,11 @@ class LocalClient {
 
   async chat(message, options = {}) {
     try {
-      const response = await fetch(`${this.url}/v1/chat`, {
+      const response = await fetch(`${this.url}/v1/chat/completions`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           model: options.model || this.model,
@@ -22,6 +23,7 @@ class LocalClient {
       }
 
       const data = await response.json();
+    //   console.log('LocalClient chat:', data.choices[0].message.content)
       return data.choices[0].message.content;
     } catch (error) {
       throw new Error(`LocalClient chat error: ${error.message}`);
@@ -29,4 +31,4 @@ class LocalClient {
   }
 }
 
-module.exports = LocalClient;
+export default LocalClient;

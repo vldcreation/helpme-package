@@ -1,4 +1,4 @@
-const OpenAI = require('openai');
+import OpenAI from 'openai';
 
 class OpenAIClient {
   constructor(config) {
@@ -25,4 +25,4 @@ class OpenAIClient {
   }
 }
 
-module.exports = OpenAIClient;
+export default OpenAIClient;

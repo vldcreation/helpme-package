@@ -1,7 +1,7 @@
-const GeminiClient = require('./gemini/client');
-const OpenAIClient = require('./openai/client');
-const LocalClient = require('./local/client');
-const ChatClientConfig = require('./config');
+import GeminiClient from './gemini/client.js';
+import OpenAIClient from './openai/client.js';
+import LocalClient from './local/client.js';
+import ChatClientConfig from './config.js';
 
 class ChatClient {
   constructor(agent='gemini', config={}, model='gemini-1.5-flash') {
@@ -65,18 +65,22 @@ class ChatClient {
 
 // Initialize with Gemini
 const config = new ChatClientConfig();
-const chatClient = new ChatClient('gemini', {
+const chatClient = new ChatClient('local', {
   apiKey: config.gemini.apiKey
 });
 
 // Chat using Gemini
-await chatClient.chat("Hello, how are you?");
+console.log(await chatClient.chat("How are you?"));
+
+// Initialize with Local
+// const config = new ChatClientConfig();
+// const chatClient = new ChatClient('local', config.local);
 
 // Switch to local agent
-chatClient.switchAgent('local', {
-  url: config.local.url,
-  model: config.local.model
-});
+// chatClient.switchAgent('local', {
+//   url: config.local.url,
+//   model: config.local.model
+// });
 
 // Chat using local agent
-await chatClient.chat("Now using local agent");
+// chatClient.chat("Now using local agent");
