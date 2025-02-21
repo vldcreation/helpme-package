@@ -2,6 +2,7 @@ import GeminiClient from './gemini/client.js';
 import OpenAIClient from './openai/client.js';
 import LocalClient from './local/client.js';
 import ChatClientConfig from './config.js';
+import {RESET, RED} from './error.js';
 
 class ChatClient {
   constructor(agent='gemini', config={}, model='gemini-1.5-flash') {
@@ -65,9 +66,17 @@ class ChatClient {
 
 // Initialize with Gemini
 const config = new ChatClientConfig();
-const chatClient = new ChatClient('local', {
-  apiKey: config.gemini.apiKey
+const chatClient = new ChatClient('openai', {
+  apiKey: config.gemini.apiKey,
 });
+
+// validate
+try {
+  config.validate();
+}
+catch (error) {
+ console.error(`${RED}Error: ${error.message}${RESET}`);
+}
 
 // Chat using Gemini
 console.log(await chatClient.chat("How are you?"));
