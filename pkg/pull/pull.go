@@ -10,6 +10,7 @@ import (
 func Pull(host string, username string, repo string, branch string) error {
 	lookUp(&host, &branch)
 
+	println("pulling")
 	// Construct the GitHub repository URL
 	repoURL := fmt.Sprintf("%s/%s/%s", host, username, repo)
 
