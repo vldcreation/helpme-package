@@ -3,6 +3,7 @@ package runtest
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -64,18 +65,23 @@ func runTestWithOutput(fpath string, funcName string, input []byte) (string, err
 	defer os.RemoveAll(tmpDir)
 
 	// Create a temporary main.go file
+	fl, err := os.ReadFile(fpath)
+	if err != nil {
+		return "", err
+	}
+
+	flString := strings.Replace(string(fl), "package "+getPackageName(fpath), "package main", 1)
 	tmpMainPath := filepath.Join(tmpDir, "main.go")
-	mainContent := fmt.Sprintf(`package main
-
-import (
-	"%s"
-)
-
+	mainContent := fmt.Sprintf(`
+%s
 func main() {
-	%s.%s()
+	%s()
 }
-`, getPackagePath(fpath), getPackageName(fpath), funcName)
+`, flString, funcName)
 
+	log.Printf("mainContent: %s\n", mainContent)
+	log.Printf("getPackagePath: %s\n", getPackagePath(fpath))
+	log.Printf("getPackageName: %s\n", getPackageName(fpath))
 	if err := os.WriteFile(tmpMainPath, []byte(mainContent), 0644); err != nil {
 		return "", fmt.Errorf("error writing temp main file: %v", err)
 	}
