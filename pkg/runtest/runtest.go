@@ -3,7 +3,6 @@ package runtest
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -79,9 +78,9 @@ func main() {
 }
 `, flString, funcName)
 
-	log.Printf("mainContent: %s\n", mainContent)
-	log.Printf("getPackagePath: %s\n", getPackagePath(fpath))
-	log.Printf("getPackageName: %s\n", getPackageName(fpath))
+	fmt.Printf("mainContent: %s\n", mainContent)
+	fmt.Printf("getPackagePath: %s\n", getPackagePath(fpath))
+	fmt.Printf("getPackageName: %s\n", getPackageName(fpath))
 	if err := os.WriteFile(tmpMainPath, []byte(mainContent), 0644); err != nil {
 		return "", fmt.Errorf("error writing temp main file: %v", err)
 	}
