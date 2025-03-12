@@ -13,12 +13,12 @@ import (
 
 func RunTest(fpath string, funcName string, mustReturnOutput bool, inputPath string, sampleOutputPath string) (string, string, error) {
 	var output strings.Builder
-	if inputPath == "" && !strings.HasPrefix(inputPath, ".in") {
+	if inputPath == "" || !strings.HasPrefix(inputPath, ".in") {
 		buildFailureMessage(&output, "input file invalid")
 		return output.String(), "", nil
 	}
 
-	if sampleOutputPath == "" && !strings.HasPrefix(sampleOutputPath, ".out") {
+	if sampleOutputPath == "" || !strings.HasPrefix(sampleOutputPath, ".out") {
 		buildFailureMessage(&output, "sample output file invalid")
 		return output.String(), "", nil
 	}
