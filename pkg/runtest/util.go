@@ -30,15 +30,21 @@ func getPackagePath(fpath string) string {
 
 // getPackageName extracts the package name from the file path
 func getPackageName(fpath string) string {
-	// Split the path by separator and get the last component
-	components := strings.Split(strings.TrimSuffix(fpath, ".go"), string(filepath.Separator))
-	// Return the last non-empty component
-	for i := len(components) - 2; i >= 0; i-- {
-		if components[i] != "" {
-			return components[i]
-		}
+	// Handle empty path case
+	if fpath == "" {
+		return "."
 	}
-	return ""
+
+	// Get the directory containing the file
+	dir := filepath.Dir(fpath)
+
+	// If the directory is empty (e.g., file in root), return an empty string
+	if dir == "" {
+		return ""
+	}
+
+	// Get the directory name (which should be the package name)
+	return filepath.Base(dir)
 }
 
 // getModuleName reads the module name from go.mod file
