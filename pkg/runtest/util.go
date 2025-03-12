@@ -30,6 +30,21 @@ func getPackagePath(fpath string) string {
 	return ""
 }
 
+func getFilename(fpath string) string {
+	return filepath.Base(fpath)
+}
+
+func getFilenameWithoutExtension(fpath string) string {
+	return strings.TrimSuffix(filepath.Base(fpath), filepath.Ext(fpath))
+}
+
+func getPackageName2(fpath string) string {
+	dir := filepath.Dir(fpath)
+	base := filepath.Base(dir)
+	ext := filepath.Ext(base)
+	return strings.TrimSuffix(base, ext)
+}
+
 // getPackageName extracts the package name from the file path
 func getPackageName(data []byte, newPackageName string) (modified string, err error) { // Define a regex to match the package declaration
 	re := regexp.MustCompile(`(?m)^package\s+\w+`)

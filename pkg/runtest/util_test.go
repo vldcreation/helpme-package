@@ -38,3 +38,47 @@ func TestGetPackageName(t *testing.T) {
 		})
 	}
 }
+
+func TestGetFileName(t *testing.T) {
+	tests := []struct {
+		name     string
+		fpath    string
+		expected string
+	}{
+		{
+			name:     "simple file",
+			fpath:    "mydir/mysubdir/mysubsubdir/helloworld.go",
+			expected: "helloworld.go",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getFilename(tt.fpath)
+			if got != tt.expected {
+				t.Errorf("expected %s, got %s", tt.expected, got)
+			}
+		})
+	}
+}
+
+func TestGetPackageName2(t *testing.T) {
+	tests := []struct {
+		name     string
+		fpath    string
+		expected string
+	}{
+		{
+			name:     "simple file",
+			fpath:    "mydir/mysubdir/mysubsubdir/helloworld.go",
+			expected: "mysubsubdir",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getPackageName2(tt.fpath)
+			if got != tt.expected {
+				t.Errorf("expected %s, got %s", tt.expected, got)
+			}
+		})
+	}
+}
