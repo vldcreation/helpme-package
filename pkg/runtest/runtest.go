@@ -73,7 +73,7 @@ func runTestWithOutput(fpath string, funcName string, input []byte) (string, err
 		return "", err
 	}
 
-	flString := strings.Replace(string(fl), "package "+getPackageName2(fpath), "package main", 1)
+	flString, err := getPackageName(fl, "main")
 	if err != nil {
 		return "", err
 	}
