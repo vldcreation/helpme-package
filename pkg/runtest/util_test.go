@@ -17,7 +17,7 @@ func TestGetPackageName(t *testing.T) {
 		{
 			name:             "simple package",
 			fpath:            "helloworld.go",
-			expectedContains: "package main",
+			expectedContains: "main",
 		},
 	}
 
