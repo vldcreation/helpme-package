@@ -1,8 +1,10 @@
 package runtest
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -29,22 +31,13 @@ func getPackagePath(fpath string) string {
 }
 
 // getPackageName extracts the package name from the file path
-func getPackageName(fpath string) string {
-	// Handle empty path case
-	if fpath == "" {
-		return "."
-	}
+func getPackageName(data []byte, newPackageName string) (modified string, err error) { // Define a regex to match the package declaration
+	re := regexp.MustCompile(`(?m)^package\s+\w+`)
+	newPackageDecl := fmt.Sprintf("package %s", newPackageName)
 
-	// Get the directory containing the file
-	dir := filepath.Dir(fpath)
-
-	// If the directory is empty (e.g., file in root), return an empty string
-	if dir == "" {
-		return ""
-	}
-
-	// Get the directory name (which should be the package name)
-	return filepath.Base(dir)
+	// Replace the package declaration with the new one
+	modifiedData := re.ReplaceAll(data, []byte(newPackageDecl))
+	return string(modifiedData), nil
 }
 
 // getModuleName reads the module name from go.mod file

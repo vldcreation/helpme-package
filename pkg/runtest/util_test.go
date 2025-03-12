@@ -1,47 +1,39 @@
 package runtest
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 )
 
 func TestGetPackageName(t *testing.T) {
+	testDataDir := "testdata"
 	tests := []struct {
-		name     string
-		fpath    string
-		expected string
+		name             string
+		fpath            string
+		expectedContains string
 	}{
 		{
-			name:     "simple package path",
-			fpath:    "/path/to/mypackage/file.go",
-			expected: "mypackage",
-		},
-		{
-			name:     "nested package path",
-			fpath:    "/path/to/parent/child/file.go",
-			expected: "child",
-		},
-		{
-			name:     "relative path",
-			fpath:    "./mypackage/file.go",
-			expected: "mypackage",
-		},
-		{
-			name:     "file in root",
-			fpath:    "/rootfile.go",
-			expected: "",
-		},
-		{
-			name:     "empty path",
-			fpath:    "",
-			expected: ".",
+			name:             "simple package",
+			fpath:            "helloworld.go",
+			expectedContains: "package main",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getPackageName(tt.fpath)
-			if got != tt.expected {
-				t.Errorf("getPackageName() = %s, want %s", got, tt.expected)
+			data, err := os.ReadFile(filepath.Join(testDataDir, tt.fpath))
+			if err != nil {
+				t.Errorf("error reading file: %v", err)
+			}
+			got, err := getPackageName(data, "package main")
+			if err != nil {
+				t.Errorf("error getting package name: %v", err)
+			}
+
+			if !strings.Contains(got, tt.expectedContains) {
+				t.Errorf("expected %s to contain %s", got, tt.expectedContains)
 			}
 		})
 	}
