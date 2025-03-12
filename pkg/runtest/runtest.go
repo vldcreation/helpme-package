@@ -69,7 +69,7 @@ func runTestWithOutput(fpath string, funcName string, input []byte) (string, err
 		return "", err
 	}
 
-	flString, err := getPackageName(fl, getPackagePath(fpath))
+	flString, err := getPackageName(fl, "package main")
 	if err != nil {
 		return "", err
 	}
