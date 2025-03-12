@@ -78,6 +78,7 @@ func main() {
 }
 `, flString, funcName)
 
+	fmt.Printf("fpath: %s\n", fpath)
 	fmt.Printf("mainContent: %s\n", mainContent)
 	fmt.Printf("getPackagePath: %s\n", getPackagePath(fpath))
 	fmt.Printf("getPackageName: %s\n", getPackageName(fpath))
