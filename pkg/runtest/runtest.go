@@ -13,14 +13,18 @@ import (
 
 func RunTest(fpath string, funcName string, mustReturnOutput bool, inputPath string, sampleOutputPath string) (string, string, error) {
 	var output strings.Builder
-	if inputPath == "" || !strings.HasPrefix(inputPath, ".in") {
+	if inputPath == "" || !strings.HasSuffix(inputPath, ".in") {
 		buildFailureMessage(&output, "input file invalid")
 		return output.String(), "", nil
 	}
 
-	if sampleOutputPath == "" || !strings.HasPrefix(sampleOutputPath, ".out") {
+	if sampleOutputPath == "" || !strings.HasSuffix(sampleOutputPath, ".out") {
 		buildFailureMessage(&output, "sample output file invalid")
 		return output.String(), "", nil
+	}
+
+	if funcName == "" {
+		funcName = getFilenameWithoutExtension(fpath)
 	}
 
 	input, err := os.ReadFile(inputPath)
@@ -69,7 +73,7 @@ func runTestWithOutput(fpath string, funcName string, input []byte) (string, err
 		return "", err
 	}
 
-	flString, err := getPackageName(fl, "main")
+	flString := strings.Replace(string(fl), "package "+getPackageName2(fpath), "package main", 1)
 	if err != nil {
 		return "", err
 	}
