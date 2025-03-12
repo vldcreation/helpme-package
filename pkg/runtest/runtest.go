@@ -120,13 +120,31 @@ func main() {
 }
 
 func buildDiffMessage(s *strings.Builder, expected string, got string) {
-	s.WriteString(consts.RED)
-	s.WriteString("Expected: ")
-	s.WriteString(expected)
-	s.WriteString("\n")
-	s.WriteString("Got: ")
-	s.WriteString(got)
-	s.WriteString(consts.RESET)
+	expectedLines := strings.Split(expected, "\n")
+	actualLines := strings.Split(got, "\n")
+
+	maxLines := len(expectedLines)
+	if len(actualLines) > maxLines {
+		maxLines = len(actualLines)
+	}
+
+	for i := 0; i < maxLines; i++ {
+		expectedLine := ""
+		actualLine := ""
+
+		if i < len(expectedLines) {
+			expectedLine = expectedLines[i]
+		}
+		if i < len(actualLines) {
+			actualLine = actualLines[i]
+		}
+
+		if expectedLine == actualLine {
+			s.WriteString(expectedLine + "\n")
+		} else {
+			s.WriteString(consts.RED + actualLine + consts.RESET + "\n")
+		}
+	}
 }
 
 func buildSuccessMessage(s *strings.Builder, msg string) {
