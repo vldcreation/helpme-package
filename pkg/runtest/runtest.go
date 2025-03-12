@@ -69,7 +69,7 @@ func runTestWithOutput(fpath string, funcName string, input []byte) (string, err
 		return "", err
 	}
 
-	flString := strings.Replace(string(fl), "package "+getPackageName(fpath), "package main", 1)
+	flString := strings.Replace(string(fl), getPackageName(fpath), "main", 1)
 	tmpMainPath := filepath.Join(tmpDir, "main.go")
 	mainContent := fmt.Sprintf(`
 %s
