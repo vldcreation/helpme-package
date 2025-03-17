@@ -27,6 +27,12 @@ func NewFileEncoder(fpath string, opts ...EncoderOpt) Encoder {
 	return i
 }
 
+func (i *FileEncoder) ApplyOpt(opts ...EncoderOpt) {
+	for _, opt := range opts {
+		opt(i)
+	}
+}
+
 func (i *FileEncoder) Encode() (string, error) {
 	if i.fpath == "" {
 		return "", ErrFilePathNotSet

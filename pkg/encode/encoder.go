@@ -2,6 +2,7 @@ package encode
 
 type Encoder interface {
 	Encode() (string, error)
+	ApplyOpt(...EncoderOpt)
 }
 
 type SourceEncoder interface {

@@ -12,7 +12,7 @@ type TextEncoder struct {
 	encoder         SourceEncoder
 }
 
-func NewTextEncoder(text string, opts ...EncoderOpt) *TextEncoder {
+func NewTextEncoder(text string, opts ...EncoderOpt) Encoder {
 	te := &TextEncoder{
 		src: []byte(text),
 	}
@@ -22,6 +22,12 @@ func NewTextEncoder(text string, opts ...EncoderOpt) *TextEncoder {
 	}
 
 	return te
+}
+
+func (t *TextEncoder) ApplyOpt(opts ...EncoderOpt) {
+	for _, opt := range opts {
+		opt(t)
+	}
 }
 
 func (t *TextEncoder) Encode() (string, error) {
