@@ -7,7 +7,11 @@ type Base64Encoder struct {
 }
 
 func NewBase64Encoder(src string) SourceEncoder {
-	encoder := base64.NewEncoding(src)
+	var encoder *base64.Encoding = base64.StdEncoding
+	if len(src) == 64 {
+		encoder = base64.NewEncoding(src)
+	}
+
 	return &Base64Encoder{enc: encoder}
 }
 
