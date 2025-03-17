@@ -20,7 +20,9 @@ type FileEncoder struct {
 }
 
 func NewFileEncoder(fpath string, opts ...EncoderOpt) Encoder {
-	i := &FileEncoder{}
+	i := &FileEncoder{
+		fpath: fpath,
+	}
 	for _, opt := range opts {
 		opt(i)
 	}
