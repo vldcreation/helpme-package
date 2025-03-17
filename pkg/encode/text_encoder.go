@@ -9,7 +9,7 @@ import (
 type TextEncoder struct {
 	src             []byte
 	copyToClipboard bool
-	encoder         Encoder
+	encoder         SourceEncoder
 }
 
 func NewTextEncoder(text string, opts ...EncoderOpt) *TextEncoder {

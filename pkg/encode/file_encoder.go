@@ -16,10 +16,10 @@ var (
 type FileEncoder struct {
 	fpath           string
 	copyToClipboard bool
-	encoder         Encoder
+	encoder         SourceEncoder
 }
 
-func NewFileEncoder(fpath string, opts ...EncoderOpt) *FileEncoder {
+func NewFileEncoder(fpath string, opts ...EncoderOpt) Encoder {
 	i := &FileEncoder{}
 	for _, opt := range opts {
 		opt(i)
