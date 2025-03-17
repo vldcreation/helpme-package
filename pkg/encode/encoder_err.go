@@ -23,10 +23,10 @@ func (e *Error) Error() string {
 }
 
 var (
-	ErrInvalidExtension = NewError[ImageEncoder]("invalid extension")
-	ErrInvalidFilePath  = NewError[ImageEncoder]("invalid file path")
-	ErrInvalidFile      = NewError[ImageEncoder]("invalid file")
-	ErrFilePathNotSet   = NewError[ImageEncoder]("file path not set")
+	ErrInvalidExtension = NewError[FileEncoder]("invalid extension")
+	ErrInvalidFilePath  = NewError[FileEncoder]("invalid file path")
+	ErrInvalidFile      = NewError[FileEncoder]("invalid file")
+	ErrFilePathNotSet   = NewError[FileEncoder]("file path not set")
 	ErrSourceTextNotSet = NewError[TextEncoder]("source text not set")
 	ErrEncoderNotSet    = NewError[any]("encoder not set")
 )

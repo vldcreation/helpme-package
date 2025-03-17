@@ -10,24 +10,24 @@ import (
 )
 
 var (
-	ImageExtensionAllowed = []string{".png", ".jpg", ".jpeg"}
+	FileExtensionAllowed = []string{".png", ".jpg", ".jpeg", ".pdf"}
 )
 
-type ImageEncoder struct {
+type FileEncoder struct {
 	fpath           string
 	copyToClipboard bool
 	encoder         Encoder
 }
 
-func NewImageEncoder(fpath string, opts ...EncoderOpt) *ImageEncoder {
-	i := &ImageEncoder{}
+func NewFileEncoder(fpath string, opts ...EncoderOpt) *FileEncoder {
+	i := &FileEncoder{}
 	for _, opt := range opts {
 		opt(i)
 	}
 	return i
 }
 
-func (i *ImageEncoder) Encode() (string, error) {
+func (i *FileEncoder) Encode() (string, error) {
 	if i.fpath == "" {
 		return "", ErrFilePathNotSet
 	}
@@ -38,12 +38,12 @@ func (i *ImageEncoder) Encode() (string, error) {
 	return i.encode()
 }
 
-func (i *ImageEncoder) encode() (string, error) {
+func (i *FileEncoder) encode() (string, error) {
 	path := filepath.Clean(i.fpath)
 
 	ext := filepath.Ext(path)
-	if !strings.Contains(strings.Join(ImageExtensionAllowed, ""), ext) {
-		return "", fmt.Errorf("image extension not allowed")
+	if !strings.Contains(strings.Join(FileExtensionAllowed, ""), ext) {
+		return "", fmt.Errorf("file extension not allowed, allowed: %s", strings.Join(FileExtensionAllowed, ", "))
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -58,7 +58,7 @@ func (i *ImageEncoder) encode() (string, error) {
 	res := i.encoder.EncodeToString(file)
 
 	if i.copyToClipboard {
-		err = i.copyImageToCliboard(res)
+		err = i.copyFileToCliboard(res)
 		if err != nil {
 			return "", err
 		}
@@ -67,7 +67,7 @@ func (i *ImageEncoder) encode() (string, error) {
 	return path, nil
 }
 
-func (i *ImageEncoder) copyImageToCliboard(text string) error {
+func (i *FileEncoder) copyFileToCliboard(text string) error {
 	err := clipboard.Init()
 	if err != nil {
 		return err
