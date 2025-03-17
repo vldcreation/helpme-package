@@ -81,11 +81,11 @@ func (i *FileEncoder) copyFileToCliboard(text string) error {
 		return err
 	}
 
-	changed := clipboard.Write(clipboard.FmtText, []byte(text))
+	changed := clipboard.Write(clipboard.FmtImage, []byte(text))
 	select {
 	case <-changed:
-		return nil
+		return fmt.Errorf(`"text data" is no longer available from clipboard.`)
 	default:
-		return fmt.Errorf("failed to copy to clipboard")
+		return nil
 	}
 }
