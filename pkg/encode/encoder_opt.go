@@ -23,13 +23,13 @@ func WithCopyToClipboard(copyToClipboard bool) EncoderOpt {
 	}
 }
 
-func WithEncoder(encoder SourceEncoder) EncoderOpt {
+func WithFormatEncoder(encoder FormatEncoder) EncoderOpt {
 	return func(T any) {
 		switch T := T.(type) {
 		case *FileEncoder:
-			T.encoder = encoder
+			T.formatEncoder = encoder
 		case *TextEncoder:
-			T.encoder = encoder
+			T.formatEncoder = encoder
 		}
 	}
 }

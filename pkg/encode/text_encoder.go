@@ -9,7 +9,7 @@ import (
 type TextEncoder struct {
 	src             []byte
 	copyToClipboard bool
-	encoder         SourceEncoder
+	formatEncoder   FormatEncoder
 }
 
 func NewTextEncoder(text string, opts ...EncoderOpt) Encoder {
@@ -35,7 +35,7 @@ func (t *TextEncoder) Encode() (string, error) {
 		return "", ErrSourceTextNotSet
 	}
 
-	if t.encoder == nil {
+	if t.formatEncoder == nil {
 		return "", ErrEncoderNotSet
 	}
 
@@ -43,7 +43,7 @@ func (t *TextEncoder) Encode() (string, error) {
 }
 
 func (t *TextEncoder) encode() string {
-	encoded := t.encoder.EncodeToString(t.src)
+	encoded := t.formatEncoder.EncodeToString(t.src)
 	if t.copyToClipboard {
 		copyTextToClipboard(encoded)
 	}

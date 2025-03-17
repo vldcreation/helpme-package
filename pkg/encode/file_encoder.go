@@ -16,7 +16,7 @@ var (
 type FileEncoder struct {
 	fpath           string
 	copyToClipboard bool
-	encoder         SourceEncoder
+	formatEncoder   FormatEncoder
 }
 
 func NewFileEncoder(fpath string, opts ...EncoderOpt) Encoder {
@@ -40,7 +40,7 @@ func (i *FileEncoder) Encode() (string, error) {
 		return "", ErrFilePathNotSet
 	}
 
-	if i.encoder == nil {
+	if i.formatEncoder == nil {
 		return "", ErrEncoderNotSet
 	}
 	return i.encode()
@@ -63,7 +63,7 @@ func (i *FileEncoder) encode() (string, error) {
 		return "", err
 	}
 
-	res := i.encoder.EncodeToString(file)
+	res := i.formatEncoder.EncodeToString(file)
 
 	if i.copyToClipboard {
 		err = i.copyFileToCliboard(res)
@@ -81,12 +81,6 @@ func (i *FileEncoder) copyFileToCliboard(text string) error {
 		return err
 	}
 
-	changed := clipboard.Write(clipboard.FmtText, []byte(text))
-
-	select {
-	case <-changed:
-		println(`"text data" is no longer available from clipboard.`)
-	}
-
+	clipboard.Write(clipboard.FmtImage, []byte(text))
 	return nil
 }

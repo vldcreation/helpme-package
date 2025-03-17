@@ -5,11 +5,11 @@ type Encoder interface {
 	ApplyOpt(...EncoderOpt)
 }
 
-type SourceEncoder interface {
+type FormatEncoder interface {
 	Encode(dst []byte, src []byte)
 	EncodeToString(src []byte) string
 }
 
-type SourceDecoder interface {
+type FormatDecoder interface {
 	Decode(dst []byte, src string) (int, error)
 }

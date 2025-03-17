@@ -6,7 +6,7 @@ type Base64Encoder struct {
 	enc *base64.Encoding
 }
 
-func NewBase64Encoder(src string) SourceEncoder {
+func NewBase64Encoder(src string) FormatEncoder {
 	var encoder *base64.Encoding = base64.StdEncoding
 	if len(src) == 64 {
 		encoder = base64.NewEncoding(src)

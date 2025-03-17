@@ -6,7 +6,7 @@ type Base32Encoder struct {
 	enc *base32.Encoding
 }
 
-func NewBase32Encoder(src string) SourceEncoder {
+func NewBase32Encoder(src string) FormatEncoder {
 	var encoder *base32.Encoding = base32.StdEncoding
 	if len(src) == 32 {
 		encoder = base32.NewEncoding(src)
