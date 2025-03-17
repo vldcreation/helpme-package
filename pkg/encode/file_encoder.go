@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	FileExtensionAllowed = []string{".png", ".jpg", ".jpeg", ".pdf"}
+	FileExtensionAllowed = []string{".png", ".jpg", ".jpeg", ".pdf", ".go"}
 )
 
 type FileEncoder struct {
@@ -72,7 +72,7 @@ func (i *FileEncoder) encode() (string, error) {
 		}
 	}
 
-	return path, nil
+	return res, nil
 }
 
 func (i *FileEncoder) copyFileToCliboard(text string) error {
