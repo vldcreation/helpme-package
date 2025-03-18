@@ -33,3 +33,13 @@ func WithFormatEncoder(encoder FormatEncoder) EncoderOpt {
 		}
 	}
 }
+
+func WithMimeType(mimeType bool) EncoderOpt {
+	return func(T any) {
+		i, ok := T.(*FileEncoder)
+		if !ok {
+			panic("T is not *FileEncoder")
+		}
+		i.withMimeType = mimeType
+	}
+}
