@@ -84,7 +84,18 @@ func (i *FileEncoder) encode() (string, error) {
 		return "", fmt.Errorf("detected MIME type %s is not allowed", mimeType)
 	}
 
-	res := i.formatEncoder.EncodeToString(buffer)
+	// Reset file pointer to the beginning to read entire content
+	if _, err := file.Seek(0, 0); err != nil {
+		return "", err
+	}
+
+	// Read the entire file into a new buffer
+	fullBuffer, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+
+	res := i.formatEncoder.EncodeToString(fullBuffer)
 
 	if i.withMimeType {
 		res = fmt.Sprintf("data:%s;base64,%s", mimeType, res)
