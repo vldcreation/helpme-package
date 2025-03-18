@@ -2,20 +2,27 @@ package encode
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"golang.design/x/clipboard"
 )
 
 var (
-	FileExtensionAllowed = []string{".png", ".jpg", ".jpeg", ".pdf", ".go"}
+	// Mapping of allowed MIME types to their corresponding file extensions
+	AllowedMimeTypes = map[string][]string{
+		"image/png":       {".png"},
+		"image/jpeg":      {".jpg", ".jpeg"},
+		"application/pdf": {".pdf"},
+		"text/plain":      {".go"}, // Assuming .go files are treated as plain text
+	}
 )
 
 type FileEncoder struct {
 	fpath           string
 	copyToClipboard bool
+	withMimeType    bool
 	formatEncoder   FormatEncoder
 }
 
@@ -49,21 +56,39 @@ func (i *FileEncoder) Encode() (string, error) {
 func (i *FileEncoder) encode() (string, error) {
 	path := filepath.Clean(i.fpath)
 
-	ext := filepath.Ext(path)
-	if !strings.Contains(strings.Join(FileExtensionAllowed, ""), ext) {
-		return "", fmt.Errorf("file extension not allowed, allowed: %s", strings.Join(FileExtensionAllowed, ", "))
-	}
-
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return "", fmt.Errorf("image does not exist")
 	}
 
-	file, err := os.ReadFile(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return "", err
 	}
 
-	res := i.formatEncoder.EncodeToString(file)
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	buffer := make([]byte, 512)
+	if _, err := file.Read(buffer); err != nil {
+		return "", err
+	}
+
+	mimeType := http.DetectContentType(buffer)
+
+	// Validate the detected MIME type against the whitelist
+	if !isMimeTypeAllowed(mimeType) {
+		return "", fmt.Errorf("detected MIME type %s is not allowed", mimeType)
+	}
+
+	res := i.formatEncoder.EncodeToString(buffer)
+
+	if i.withMimeType {
+		res = fmt.Sprintf("data:%s;base64,%s", mimeType, res)
+	}
 
 	if i.copyToClipboard {
 		err = i.copyFileToCliboard(res)
@@ -73,6 +98,11 @@ func (i *FileEncoder) encode() (string, error) {
 	}
 
 	return res, nil
+}
+
+func isMimeTypeAllowed(mimeType string) bool {
+	_, exists := AllowedMimeTypes[mimeType]
+	return exists
 }
 
 func (i *FileEncoder) copyFileToCliboard(text string) error {
