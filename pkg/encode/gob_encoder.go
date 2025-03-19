@@ -29,7 +29,7 @@ func (g *GobEncoder) EncodeToString(src []byte) string {
 		return ""
 	}
 
-	return g.buf.String()
+	return string(g.buf.Bytes())
 }
 
 func (g *GobEncoder) Decode(dst, src []byte) (int, error) {
