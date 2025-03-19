@@ -6,11 +6,12 @@ import (
 )
 
 type GobEncoder struct {
+	buf *bytes.Buffer
 	enc *gob.Encoder
 	dec *gob.Decoder
 }
 
-func NewGobEncoder() *GobEncoder {
+func NewGobEncoder() FormatEncoder {
 	b := bytes.NewBuffer(nil)
 	return &GobEncoder{
 		enc: gob.NewEncoder(b),
@@ -19,8 +20,15 @@ func NewGobEncoder() *GobEncoder {
 }
 
 // WIP
-func (g *GobEncoder) Encode(src []byte) ([]byte, error) {
-	return src, nil
+func (g *GobEncoder) Encode(src []byte, dst []byte) {
+}
+
+func (g *GobEncoder) EncodeToString(src []byte) string {
+	if err := g.enc.Encode(src); err != nil {
+		return ""
+	}
+
+	return g.buf.String()
 }
 
 func (g *GobEncoder) Decode(dst, src []byte) (int, error) {
