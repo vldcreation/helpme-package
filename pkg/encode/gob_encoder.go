@@ -14,6 +14,7 @@ type GobEncoder struct {
 func NewGobEncoder() FormatEncoder {
 	b := bytes.NewBuffer(nil)
 	return &GobEncoder{
+		buf: b,
 		enc: gob.NewEncoder(b),
 		dec: gob.NewDecoder(b),
 	}
