@@ -17,6 +17,12 @@ var (
 		"application/pdf": {".pdf"},
 		"text/plain":      {".go"}, // Assuming .go files are treated as plain text
 	}
+
+	AvailableFormatEncoder = []string{
+		"base64",
+		"base32",
+		"gob",
+		"hex"}
 )
 
 type FileEncoder struct {
