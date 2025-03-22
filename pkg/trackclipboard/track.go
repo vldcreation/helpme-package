@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -44,7 +45,7 @@ func NewTrackClipboard(cfg *Config) *TrackClipboard {
 				panic(err)
 			}
 			t.Cfg.File = &FileConfig{
-				Path: homeDir + "/Downloads/",
+				Path: filepath.Join(homeDir, "Downloads"),
 				Name: "",
 			}
 		}
