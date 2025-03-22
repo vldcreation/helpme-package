@@ -3,6 +3,7 @@ package trackclipboard
 import (
 	"context"
 	"os"
+	"path/filepath"
 )
 
 type LocalChannel struct {
@@ -18,11 +19,20 @@ func NewLocalChannel(cfg *FileConfig) TrackChannel {
 }
 
 func (l *LocalChannel) Send(ctx context.Context, msg string) error {
-	f, err := os.OpenFile(l.Path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// Ensure directory exists
+	if err := os.MkdirAll(l.Path, 0755); err != nil {
+		return err
+	}
+
+	// Construct full file path
+	fullPath := filepath.Join(l.Path, l.Name)
+
+	f, err := os.OpenFile(fullPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
+
 	if _, err := f.WriteString(msg); err != nil {
 		return err
 	}
