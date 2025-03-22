@@ -85,28 +85,37 @@ func (t *TrackClipboard) Track() {
 
 	// Create a cancellable context
 	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
+	defer func() {
+		// Cleanup resources
+		cancel()
+		if err := t.Channel.Close(); err != nil {
+			fmt.Printf("Error closing channel: %v\n", err)
+		}
+	}()
 
 	// Create timer for idle timeout
 	timer := time.NewTimer(t.Cfg.App.Idle)
 	defer timer.Stop()
 
+	// Watch clipboard changes
+	content := clipboard.Watch(ctx, clipboard.FmtText)
+
 	for {
-		// Watch clipboard changes
-		content := clipboard.Watch(ctx, clipboard.FmtText)
 		select {
 		case data := <-content:
 			// Reset timer when clipboard content changes
 			if !timer.Stop() {
-				<-timer.C
+				select {
+				case <-timer.C:
+				default:
+				}
 			}
 			if err := t.Channel.Send(ctx, string(data)); err != nil {
-				fmt.Println("Error sending message:", err)
+				fmt.Printf("Error sending message: %v\n", err)
 			}
 			timer.Reset(t.Cfg.App.Idle)
-			fmt.Println("Sending: ", string(<-content))
 		case <-timer.C:
-			fmt.Println("idle timeout")
+			fmt.Println("Idle timeout, stopping clipboard tracking")
 			return
 		}
 	}

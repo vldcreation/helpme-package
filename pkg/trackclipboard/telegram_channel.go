@@ -17,3 +17,7 @@ func NewTelegramChannel(cfg *TelegramConfig) TrackChannel {
 func (t *TelegramChannel) Send(ctx context.Context, msg string) error {
 	return nil
 }
+
+func (t *TelegramChannel) Close() error {
+	return nil
+}
