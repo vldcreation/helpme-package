@@ -94,17 +94,17 @@ func (t *TrackClipboard) Track() {
 	for {
 		// Watch clipboard changes
 		content := clipboard.Watch(ctx, clipboard.FmtText)
-		fmt.Println(<-content)
 		select {
 		case data := <-content:
 			// Reset timer when clipboard content changes
 			if !timer.Stop() {
 				<-timer.C
 			}
-			timer.Reset(t.Cfg.App.Idle)
 			if err := t.Channel.Send(ctx, string(data)); err != nil {
 				fmt.Println("Error sending message:", err)
 			}
+			timer.Reset(t.Cfg.App.Idle)
+			fmt.Println("Sending: ", string(<-content))
 		case <-timer.C:
 			fmt.Println("idle timeout")
 			return
