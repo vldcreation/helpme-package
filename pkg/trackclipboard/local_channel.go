@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type LocalChannel struct {
@@ -19,13 +20,23 @@ func NewLocalChannel(cfg *FileConfig) TrackChannel {
 }
 
 func (l *LocalChannel) Send(ctx context.Context, msg string) error {
+	// Expand tilde to home directory if present
+	path := l.Path
+	if strings.HasPrefix(path, "~") {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+		path = filepath.Join(homeDir, path[2:])
+	}
+
 	// Ensure directory exists
-	if err := os.MkdirAll(filepath.Dir(l.Path), 0755); err != nil {
+	if err := os.MkdirAll(path, 0755); err != nil {
 		return err
 	}
 
 	// Construct full file path
-	fullPath := filepath.Join(l.Path, l.Name)
+	fullPath := filepath.Join(path, l.Name)
 
 	f, err := os.OpenFile(fullPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
