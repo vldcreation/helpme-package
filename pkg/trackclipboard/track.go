@@ -114,6 +114,12 @@ func (t *TrackClipboard) Track() {
 				fmt.Printf("Error sending message: %v\n", err)
 			}
 			timer.Reset(t.Cfg.App.Idle)
+			if t.Cfg.App.Debug {
+				fmt.Printf("%s: Sucess sending clipboard content => %s", t.Cfg.App.Channel, string(data))
+			}
+		case <-ctx.Done():
+			fmt.Println("Context canceled, stopping clipboard tracking")
+			return
 		case <-timer.C:
 			fmt.Println("Idle timeout, stopping clipboard tracking")
 			return

@@ -11,6 +11,7 @@ type Config struct {
 type APPConfig struct {
 	Channel string        `yaml:"channel" env:"APP_CHANNEL" mapstructure:"app_channel"`
 	Idle    time.Duration `yaml:"idle" env:"APP_IDLE" mapstructure:"app_idle"`
+	Debug   bool          `yaml:"debug" env:"APP_DEBUG" mapstructure:"app_debug"`
 }
 type FileConfig struct {
 	Path string `yaml:"path" env:"FILE_PATH" mapstructure:"file_path"`
