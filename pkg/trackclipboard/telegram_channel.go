@@ -26,7 +26,7 @@ func NewTelegramChannel(cfg *TelegramConfig) TrackChannel {
 func (t *TelegramChannel) Send(ctx context.Context, msg string) error {
 	query := url.Values{}
 	query.Set("chat_id", t.ChatID)
-	query.Set("text", url.QueryEscape(msg))
+	query.Set("text", msg)
 	apiUrl := fmt.Sprintf(API_URL, t.Token)
 	_, err := http.PostForm(apiUrl, query)
 	return err
