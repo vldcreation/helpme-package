@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
+	"strings"
 )
 
 const (
@@ -24,11 +24,16 @@ func NewTelegramChannel(cfg *TelegramConfig) TrackChannel {
 }
 
 func (t *TelegramChannel) Send(ctx context.Context, msg string) error {
-	query := url.Values{}
-	query.Set("chat_id", t.ChatID)
-	query.Set("text", msg)
 	apiUrl := fmt.Sprintf(API_URL, t.Token)
-	_, err := http.PostForm(apiUrl, query)
+	data := fmt.Sprintf("chat_id=%s&text=%s", t.ChatID, msg)
+	req, err := http.NewRequestWithContext(ctx, "POST", apiUrl, strings.NewReader(data))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	_, err = client.Do(req)
 	return err
 }
 
