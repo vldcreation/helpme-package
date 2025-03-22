@@ -1,6 +1,15 @@
 package trackclipboard
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/url"
+)
+
+const (
+	API_URL = "htpps://api.telegram.org/bot%s/sendMessage"
+)
 
 type TelegramChannel struct {
 	Token  string
@@ -15,7 +24,12 @@ func NewTelegramChannel(cfg *TelegramConfig) TrackChannel {
 }
 
 func (t *TelegramChannel) Send(ctx context.Context, msg string) error {
-	return nil
+	query := url.Values{}
+	query.Set("chat_id", t.ChatID)
+	query.Set("text", url.QueryEscape(msg))
+	apiUrl := fmt.Sprintf(API_URL, t.Token)
+	_, err := http.PostForm(apiUrl, query)
+	return err
 }
 
 func (t *TelegramChannel) Close() error {
