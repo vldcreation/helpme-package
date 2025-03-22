@@ -92,7 +92,7 @@ func (t *TrackClipboard) Track() {
 
 	// Watch clipboard changes
 	content := clipboard.Watch(ctx, clipboard.FmtText)
-	fmt.Println(content)
+	fmt.Println(<-content)
 
 	for {
 		select {
