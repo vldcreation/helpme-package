@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	API_URL = "htpps://api.telegram.org/bot%s/sendMessage"
+	API_URL = "https://api.telegram.org/bot%s/sendMessage"
 )
 
 type TelegramChannel struct {
