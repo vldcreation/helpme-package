@@ -90,11 +90,10 @@ func (t *TrackClipboard) Track() {
 	timer := time.NewTimer(t.Cfg.App.Idle)
 	defer timer.Stop()
 
-	// Watch clipboard changes
-	content := clipboard.Watch(ctx, clipboard.FmtText)
-	fmt.Println(<-content)
-
 	for {
+		// Watch clipboard changes
+		content := clipboard.Watch(ctx, clipboard.FmtText)
+		fmt.Println(<-content)
 		select {
 		case data := <-content:
 			// Reset timer when clipboard content changes
