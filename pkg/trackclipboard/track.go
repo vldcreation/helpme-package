@@ -111,24 +111,3 @@ func (t *TrackClipboard) Track() {
 		}
 	}
 }
-
-func writeToFile(fpath string, message string) {
-	// create temporary file
-	file, err := os.OpenFile(fpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer func(file *os.File, cause error) {
-		err := file.Close()
-		if err != nil {
-			fmt.Println("Error closing file:", cause)
-		}
-	}(file, err)
-
-	_, err = file.WriteString(message)
-	if err != nil {
-		fmt.Println("Error writing to file:", err)
-		return
-	}
-}
