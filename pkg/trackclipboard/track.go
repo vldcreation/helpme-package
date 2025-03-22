@@ -20,15 +20,19 @@ func NewTrackClipboard(cfg *Config) *TrackClipboard {
 		Cfg: cfg,
 	}
 
-	if t.Cfg.Channel == "" {
-		t.Cfg.Channel = "local"
+	if t.Cfg.App == nil {
+		t.Cfg.App = &APPConfig{}
 	}
 
-	if t.Cfg.Idle <= 0 {
-		t.Cfg.Idle = 10 * time.Second
+	if t.Cfg.App.Channel == "" {
+		t.Cfg.App.Channel = "local"
 	}
 
-	if t.Cfg.Channel == "local" {
+	if t.Cfg.App.Idle <= 0 {
+		t.Cfg.App.Idle = 10 * time.Second
+	}
+
+	if t.Cfg.App.Channel == "local" {
 		if t.Cfg.File == nil {
 			t.Cfg.File = &FileConfig{}
 		}
@@ -53,13 +57,13 @@ func NewTrackClipboard(cfg *Config) *TrackClipboard {
 		}
 	}
 
-	if t.Cfg.Channel == "telegram" {
+	if t.Cfg.App.Channel == "telegram" {
 		if t.Cfg.Telegram == nil {
 			panic("telegram config is nil")
 		}
 	}
 
-	switch t.Cfg.Channel {
+	switch t.Cfg.App.Channel {
 	case "local":
 		t.Channel = NewLocalChannel(t.Cfg.File)
 	case "telegram":
@@ -83,7 +87,7 @@ func (t *TrackClipboard) Track() {
 	defer cancel()
 
 	// Create timer for idle timeout
-	timer := time.NewTimer(t.Cfg.Idle)
+	timer := time.NewTimer(t.Cfg.App.Idle)
 	defer timer.Stop()
 
 	// Watch clipboard changes
@@ -96,7 +100,7 @@ func (t *TrackClipboard) Track() {
 			if !timer.Stop() {
 				<-timer.C
 			}
-			timer.Reset(t.Cfg.Idle)
+			timer.Reset(t.Cfg.App.Idle)
 			t.Channel.Send(ctx, string(data))
 		case <-timer.C:
 			fmt.Println("idle timeout")
