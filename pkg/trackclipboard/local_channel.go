@@ -69,7 +69,7 @@ func (l *LocalChannel) processMessages() {
 	for {
 		select {
 		case msg := <-l.msgChan:
-			if _, err := f.WriteString(msg + "\n"); err != nil {
+			if _, err := f.Write([]byte(msg + "\n")); err != nil {
 				fmt.Printf("Error writing to file: %v\n", err)
 			}
 		case <-l.doneChan:
