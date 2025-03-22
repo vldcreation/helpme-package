@@ -20,7 +20,7 @@ func NewLocalChannel(cfg *FileConfig) TrackChannel {
 
 func (l *LocalChannel) Send(ctx context.Context, msg string) error {
 	// Ensure directory exists
-	if err := os.MkdirAll(l.Path, 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(l.Path), 0755); err != nil {
 		return err
 	}
 
