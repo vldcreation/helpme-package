@@ -101,7 +101,9 @@ func (t *TrackClipboard) Track() {
 				<-timer.C
 			}
 			timer.Reset(t.Cfg.App.Idle)
-			t.Channel.Send(ctx, string(data))
+			if err := t.Channel.Send(ctx, string(data)); err != nil {
+				fmt.Println("Error sending message:", err)
+			}
 		case <-timer.C:
 			fmt.Println("idle timeout")
 			return
