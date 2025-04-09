@@ -6,7 +6,7 @@ func WithFpath(fpath string) EncoderOpt {
 	return func(T any) {
 		i, ok := T.(*FileEncoder)
 		if !ok {
-			panic("T is not *FileEncoder")
+			return
 		}
 		i.fpath = fpath
 	}
@@ -38,7 +38,7 @@ func WithMimeType(mimeType bool) EncoderOpt {
 	return func(T any) {
 		i, ok := T.(*FileEncoder)
 		if !ok {
-			panic("T is not *FileEncoder")
+			return
 		}
 		i.withMimeType = mimeType
 	}
