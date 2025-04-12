@@ -38,6 +38,7 @@ func (fs *FileServer) Run() error {
 	}
 
 	http.HandleFunc("/", fs.fileHandler)
+	http.HandleFunc("/upload", fs.uploadHandler)
 
 	address := fs.host + fs.port
 	fmt.Printf("Serving %s on http://%s\n", fs.rootDir, address)
@@ -105,7 +106,88 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 				font-size: 0.9em;
 			}
 			.download-btn:hover { background-color: #45a049; }
+			.upload-zone {
+				border: 2px dashed #ccc;
+				padding: 20px;
+				text-align: center;
+				margin: 20px 0;
+				cursor: pointer;
+			}
+			.upload-zone.dragover {
+				background-color: #e1f5fe;
+				border-color: #2196f3;
+			}
+			.progress {
+				width: 100%;
+				height: 20px;
+				background-color: #f5f5f5;
+				border-radius: 4px;
+				margin-top: 10px;
+				display: none;
+			}
+			.progress-bar {
+				height: 100%;
+				background-color: #4CAF50;
+				border-radius: 4px;
+				width: 0%;
+				transition: width 0.3s ease;
+			}
 		</style>
+		<script>
+			function handleDrop(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				const files = e.dataTransfer.files;
+				handleFiles(files);
+			}
+
+			function handleDragOver(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				e.target.classList.add('dragover');
+			}
+
+			function handleDragLeave(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				e.target.classList.remove('dragover');
+			}
+
+			function handleFiles(files) {
+				for (const file of files) {
+					uploadFile(file);
+				}
+			}
+
+			function uploadFile(file) {
+				const formData = new FormData();
+				formData.append('file', file);
+
+				const progress = document.getElementById('progress');
+				const progressBar = document.getElementById('progress-bar');
+				progress.style.display = 'block';
+
+				const xhr = new XMLHttpRequest();
+				xhr.open('POST', '/upload');
+
+				xhr.upload.onprogress = (e) => {
+					if (e.lengthComputable) {
+						const percentComplete = (e.loaded / e.total) * 100;
+						progressBar.style.width = percentComplete + '%';
+					}
+				};
+
+				xhr.onload = () => {
+					if (xhr.status === 200) {
+						window.location.reload();
+					} else {
+						alert('Upload failed: ' + xhr.responseText);
+					}
+				};
+
+				xhr.send(formData);
+			}
+		</script>
 	</head>
 	<body>
 	`)
@@ -121,6 +203,19 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 		fmt.Fprintf(w, `<a href="%s">Back</a>`, parentPath)
 	}
 	fmt.Fprintf(w, `<a href="/">Root</a></div>`)
+
+	fmt.Fprintf(w, `<div class="upload-zone" 
+		ondrop="handleDrop(event)" 
+		ondragover="handleDragOver(event)" 
+		ondragleave="handleDragLeave(event)"
+		onclick="document.getElementById('fileInput').click()">
+		<p>Drag and drop files here or click to upload</p>
+		<input type="file" id="fileInput" style="display: none" 
+			onchange="handleFiles(this.files)" multiple>
+	</div>
+	<div id="progress" class="progress">
+		<div id="progress-bar" class="progress-bar"></div>
+	</div>`)
 
 	fmt.Fprintf(w, "<ul class=\"file-list\">")
 	for _, file := range files {
@@ -142,6 +237,42 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 		fmt.Fprintf(w, "</li>")
 	}
 	fmt.Fprintf(w, "</ul></body></html>")
+}
+
+// uploadHandler handles file uploads
+func (fs *FileServer) uploadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// 32 MB max file size
+	r.ParseMultipartForm(32 << 20)
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "Error retrieving file: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Create the file path
+	filePath := filepath.Join(fs.rootDir, handler.Filename)
+
+	// Create the file
+	dst, err := os.Create(filePath)
+	if err != nil {
+		http.Error(w, "Error creating file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer dst.Close()
+
+	// Copy the uploaded file to the created file
+	if _, err := io.Copy(dst, file); err != nil {
+		http.Error(w, "Error saving file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // compressAndDownloadDir compresses a directory and sends it as a zip file
