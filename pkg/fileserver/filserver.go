@@ -112,10 +112,34 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 				text-align: center;
 				margin: 20px 0;
 				cursor: pointer;
+				position: relative;
 			}
 			.upload-zone.dragover {
 				background-color: #e1f5fe;
 				border-color: #2196f3;
+			}
+			.spinner {
+				display: none;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 40px;
+				height: 40px;
+				border: 4px solid #f3f3f3;
+				border-top: 4px solid #3498db;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+			}
+			@keyframes spin {
+				0% { transform: translate(-50%, -50%) rotate(0deg); }
+				100% { transform: translate(-50%, -50%) rotate(360deg); }
+			}
+			.upload-zone.uploading {
+				background-color: rgba(255, 255, 255, 0.8);
+			}
+			.upload-zone.uploading > * {
+				opacity: 0.5;
 			}
 			.progress {
 				width: 100%;
@@ -163,8 +187,13 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 				const formData = new FormData();
 				formData.append('file', file);
 
+				const uploadZone = document.querySelector('.upload-zone');
+				const spinner = uploadZone.querySelector('.spinner');
 				const progress = document.getElementById('progress');
 				const progressBar = document.getElementById('progress-bar');
+
+				uploadZone.classList.add('uploading');
+				spinner.style.display = 'block';
 				progress.style.display = 'block';
 
 				const xhr = new XMLHttpRequest();
@@ -178,6 +207,8 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 				};
 
 				xhr.onload = () => {
+					uploadZone.classList.remove('uploading');
+					spinner.style.display = 'none';
 					if (xhr.status === 200) {
 						window.location.reload();
 					} else {
@@ -212,6 +243,7 @@ func (fs *FileServer) dirList(w http.ResponseWriter, dirPath string) {
 		<p>Drag and drop files here or click to upload</p>
 		<input type="file" id="fileInput" style="display: none" 
 			onchange="handleFiles(this.files)" multiple>
+		<div class="spinner"></div>
 	</div>
 	<div id="progress" class="progress">
 		<div id="progress-bar" class="progress-bar"></div>
