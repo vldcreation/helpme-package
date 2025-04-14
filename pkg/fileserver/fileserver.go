@@ -14,6 +14,7 @@ type FileServer struct {
 	rootDir string
 	host    string
 	port    string
+	auth    *authenticator
 }
 
 // New creates a new FileServer instance
@@ -38,8 +39,8 @@ func (fs *FileServer) Run() error {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", AuthMiddleware(http.HandlerFunc(fs.fileHandler)))
-	mux.Handle("/upload", AuthMiddleware(http.HandlerFunc(fs.uploadHandler)))
+	mux.Handle("/", AuthMiddleware(fs, http.HandlerFunc(fs.fileHandler)))
+	mux.Handle("/upload", AuthMiddleware(fs, http.HandlerFunc(fs.uploadHandler)))
 
 	address := fs.host + fs.port
 	fmt.Printf("Serving %s on http://%s\n", fs.rootDir, address)

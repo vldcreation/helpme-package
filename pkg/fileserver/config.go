@@ -18,3 +18,12 @@ func WithPort(port string) FileServerOpt {
 		}
 	}
 }
+
+// WithAuth sets the authentication string for the file server
+// Auth type currently only works for basic auth
+// Format: username:password
+func WithAuth(auth string) FileServerOpt {
+	return func(c *FileServer) {
+		c.auth = newAuthenticator(authTypeBasic, auth)
+	}
+}
