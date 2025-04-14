@@ -24,6 +24,10 @@ func WithPort(port string) FileServerOpt {
 // Format: username:password
 func WithAuth(auth string) FileServerOpt {
 	return func(c *FileServer) {
+		if auth == "" {
+			return
+		}
+
 		c.auth = newAuthenticator(authTypeBasic, auth)
 	}
 }
