@@ -37,12 +37,13 @@ func (fs *FileServer) Run() error {
 		return fmt.Errorf("directory %s does not exist", fs.rootDir)
 	}
 
-	http.HandleFunc("/", fs.fileHandler)
-	http.HandleFunc("/upload", fs.uploadHandler)
+	mux := http.NewServeMux()
+	mux.Handle("/", AuthMiddleware(http.HandlerFunc(fs.fileHandler)))
+	mux.Handle("/upload", AuthMiddleware(http.HandlerFunc(fs.uploadHandler)))
 
 	address := fs.host + fs.port
 	fmt.Printf("Serving %s on http://%s\n", fs.rootDir, address)
-	return http.ListenAndServe(fs.port, nil)
+	return http.ListenAndServe(fs.port, mux)
 }
 
 // fileHandler handles file requests
